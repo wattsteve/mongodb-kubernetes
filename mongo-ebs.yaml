@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mongo-ebs
+  labels:
+    name: mongo-1
+spec:
+  hostNetwork: true
+  nodeSelector:
+    mongo-node: mongo-1
+  containers:
+    - name: mongodb
+      image: docker.io/mongo
+      args:
+        - --replSet
+        - rs0
+      ports:
+        - name: mongo
+          containerPort: 27017
+          hostPort: 27017
+      volumeMounts:
+          - name: mongo-disk
+            mountPath: "/data/db"
+  volumes:
+    - name: mongo-disk
+      awsElasticBlockStore:
+        volumeID: vol-632ca5bc
+        fsType: ext4
